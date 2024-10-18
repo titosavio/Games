@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bc0q6we77gpug"]
+
+[ext_resource type="Script" path="res://scripts/card_container.gd" id="1_05fat"]
+
+[node name="CardContainer" type="Node"]
+script = ExtResource("1_05fat")

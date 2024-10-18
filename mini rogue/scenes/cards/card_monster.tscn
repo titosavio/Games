@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cts1uy1p8yxrh"]
+
+[ext_resource type="Texture2D" uid="uid://cqcsad5r3ma6p" path="res://assets/cards/cards_transp.png" id="1_nrql3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bio1y"]
+atlas = ExtResource("1_nrql3")
+region = Rect2(71, 48, 477, 677)
+
+[node name="card_monster" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_bio1y")

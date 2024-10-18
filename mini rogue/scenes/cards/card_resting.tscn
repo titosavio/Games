@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://wb7ec6ipjb8h"]
+
+[ext_resource type="Texture2D" uid="uid://cqcsad5r3ma6p" path="res://assets/cards/cards_transp.png" id="1_mk02y"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k8fxk"]
+atlas = ExtResource("1_mk02y")
+region = Rect2(1071, 48, 478, 677)
+
+[node name="card_resting" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_k8fxk")

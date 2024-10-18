@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bu1bl7udpdl0i"]
+
+[ext_resource type="Script" path="res://scripts/card_stats.gd" id="1_4hto8"]
+[ext_resource type="Texture2D" uid="uid://cqcsad5r3ma6p" path="res://assets/cards/cards_transp.png" id="1_ckntl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xvqup"]
+atlas = ExtResource("1_ckntl")
+region = Rect2(1071, 1446, 478, 677)
+
+[node name="card_stats" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4hto8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_xvqup")

@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://q46grxvtwlk0"]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_xws1d"]
+[ext_resource type="PackedScene" uid="uid://bc0q6we77gpug" path="res://scenes/card_container.tscn" id="2_sghst"]
+[ext_resource type="PackedScene" uid="uid://cpmggmbm01iil" path="res://scenes/player.tscn" id="3_4bito"]
+
+[node name="game" type="Node2D"]
+script = ExtResource("1_xws1d")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CardContainer" parent="." instance=ExtResource("2_sghst")]
+
+[node name="Player" parent="." instance=ExtResource("3_4bito")]

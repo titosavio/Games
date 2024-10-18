@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://y2ta77dsgeh4"]
+
+[ext_resource type="Texture2D" uid="uid://cqcsad5r3ma6p" path="res://assets/cards/cards_transp.png" id="1_lekjh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7sgst"]
+atlas = ExtResource("1_lekjh")
+region = Rect2(1071, 747, 478, 677)
+
+[node name="card_event" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_7sgst")
