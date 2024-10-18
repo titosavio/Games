@@ -7,7 +7,7 @@ var damage: int = 0:
 		damage = clamp(dmg, 0, 1000)
 		print('Damage delt: ', str(damage))
 	
-signal earned_xp(exp_reward)
+signal earned_xp(exp_reward: int)
 
 var exp_reward: int = 0:
 	set(exp):
@@ -16,4 +16,4 @@ var exp_reward: int = 0:
 		print('Earned %s poins of experience' % exp_reward)
 	
 func _ready():
-	exp_reward = 10
+	pass
