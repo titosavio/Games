@@ -59,4 +59,6 @@ func _process(delta: float) -> void:
 
 func _on_earned_xp(val: int) -> void:
 	add_xp(val)
+func get_xp():
+	return xp
 		

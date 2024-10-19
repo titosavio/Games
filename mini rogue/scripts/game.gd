@@ -1,17 +1,16 @@
 extends Node2D
 
-const deck_script = preload("res://scripts/deck.gd")
-const Dice = preload("res://scripts/dice.gd") 
+const DeckScript = preload("res://scripts/deck.gd")
+const DiceScript = preload("res://scripts/dice.gd")
 
 @onready var cards_container = $CardContainer
-
-@onready var dice = Dice.new()
+# @onready var dice = Dice.new()
 
 var is_last_floor = false
 var cards = []
 
 func _ready() -> void:
-	var deck_code = deck_script.new()
+	var deck_code = DeckScript.new()
 	var deck = deck_code.create_deck()
 	cards = deck_code.place_cards(deck, is_last_floor)
 	for card in cards:
