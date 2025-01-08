@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfi2ppsf6676"]
+
+[ext_resource type="Script" path="res://scenes/scripts/game_manager.gd" id="1_rrgbs"]
+[ext_resource type="PackedScene" uid="uid://bnbdbe07d468e" path="res://scenes/map.tscn" id="2_vhavc"]
+
+[node name="game_manager" type="Node2D"]
+script = ExtResource("1_rrgbs")
+game_seed = 11
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(463, 271)
+
+[node name="map" parent="." instance=ExtResource("2_vhavc")]
+offset_left = 4.0
+offset_right = 4.0
+frequency = 0.05
+fractal_octaves = 3
+fractal_lacunarity = 6.59
+fractal_gain = 14.195
+island_size = Vector2(100, 50)
+pixel_size = 2
