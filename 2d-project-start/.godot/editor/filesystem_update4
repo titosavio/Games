@@ -1,0 +1,13 @@
+res://scenes/mob.tscn
+res://scenes/game.tscn
+res://scenes/player.tscn
+res://scenes/tree.tscn
+res://scenes/gun.tscn
+res://scenes/bullet.tscn
+res://scenes/bullet.gd
+res://scenes/gun.gd
+res://scenes/mob.gd
+res://scenes/game.gd
+res://characters/slime/slime.gd
+res://smoke_explosion/smoke_explosion.tscn
+res://scenes/player.gd

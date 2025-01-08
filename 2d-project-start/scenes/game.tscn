@@ -1,0 +1,79 @@
+[gd_scene load_steps=6 format=3 uid="uid://dqiuairx7l5if"]
+
+[ext_resource type="Script" path="res://scenes/game.gd" id="1_tne07"]
+[ext_resource type="PackedScene" uid="uid://cppjdhu087t6q" path="res://scenes/player.tscn" id="1_utyr7"]
+[ext_resource type="PackedScene" uid="uid://cb2ri5r4u6ao5" path="res://scenes/tree.tscn" id="2_xt1mf"]
+[ext_resource type="PackedScene" uid="uid://1ov8tny2uhbm" path="res://scenes/mob.tscn" id="3_giq8l"]
+
+[sub_resource type="Curve2D" id="Curve2D_veflu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -179, -93, 0, 0, 0, 0, 2089, -123, 0, 0, 0, 0, 2072, 1165, 0, 0, 0, 0, -175, 1155, 0, 0, 0, 0, -179, -93)
+}
+point_count = 5
+
+[node name="Game" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_tne07")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -128
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+offset_right = 1906.0
+offset_bottom = 1082.0
+
+[node name="Player" parent="." instance=ExtResource("1_utyr7")]
+position = Vector2(854, 511)
+
+[node name="Spawner" type="Node2D" parent="Player"]
+position = Vector2(-854, -511)
+
+[node name="MobSpawnTimer" type="Timer" parent="Player/Spawner"]
+wait_time = 0.3
+autostart = true
+
+[node name="SpawnPath" type="Path2D" parent="Player/Spawner"]
+curve = SubResource("Curve2D_veflu")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Player/Spawner/SpawnPath"]
+unique_name_in_owner = true
+position = Vector2(-179, -93)
+rotation = -0.0132267
+
+[node name="Trees" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Tree" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(448, 275)
+
+[node name="Tree2" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(380, 707)
+
+[node name="Tree3" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(1180, 723)
+
+[node name="Tree4" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(1276, 283)
+
+[node name="Tree5" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(852, 743)
+
+[node name="Tree6" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(928, 779)
+
+[node name="Tree7" parent="Trees" instance=ExtResource("2_xt1mf")]
+position = Vector2(828, 807)
+
+[node name="Mobs" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Mob" parent="Mobs" instance=ExtResource("3_giq8l")]
+position = Vector2(582, 489)
+
+[node name="Mob2" parent="Mobs" instance=ExtResource("3_giq8l")]
+position = Vector2(624, 147)
+
+[node name="Mob3" parent="Mobs" instance=ExtResource("3_giq8l")]
+position = Vector2(207, 400)
+
+[connection signal="timeout" from="Player/Spawner/MobSpawnTimer" to="." method="_on_mob_spawn_timer_timeout"]

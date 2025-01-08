@@ -12,3 +12,5 @@ script = ExtResource("1_xws1d")
 [node name="CardContainer" parent="." instance=ExtResource("2_sghst")]
 
 [node name="Player" parent="." instance=ExtResource("3_4bito")]
+
+[connection signal="earned_xp" from="CardContainer" to="Player" method="_on_earned_xp"]
