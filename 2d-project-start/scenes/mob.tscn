@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://1ov8tny2uhbm"]
+
+[ext_resource type="PackedScene" uid="uid://ogik4s70pgwl" path="res://characters/slime/slime.tscn" id="1_gfsuq"]
+[ext_resource type="Script" path="res://scenes/mob.gd" id="1_ociqi"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2lb14"]
+radius = 54.0093
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sp3li"]
+radius = 59.0085
+
+[node name="Mob" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_ociqi")
+
+[node name="Slime" parent="." instance=ExtResource("1_gfsuq")]
+unique_name_in_owner = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -28)
+shape = SubResource("CircleShape2D_2lb14")
+
+[node name="HurtBox" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, -27)
+shape = SubResource("CircleShape2D_sp3li")
+debug_color = Color(0.925352, 0.26625, 0.151084, 0.42)
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_damage_box_area_entered"]
+[connection signal="area_exited" from="HurtBox" to="." method="_on_hurt_box_area_exited"]

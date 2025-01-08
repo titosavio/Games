@@ -1,0 +1,14 @@
+Node2D
+Camera2D
+Timer
+PathFollow2D
+Path2D
+ProgressBar
+CollisionShape2D
+Area2D
+Marker2D
+CanvasLayer
+CanvasGroup
+CharacterBody2D
+Node
+StaticBody2D
