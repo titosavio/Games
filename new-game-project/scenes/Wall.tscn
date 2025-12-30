@@ -1,8 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://c3uay2k56y6mf"]
-
-[sub_resource type="GDScript" id="GDScript_6k1vx"]
-script/source = "extends Area2D
-"
+[gd_scene load_steps=3 format=3 uid="uid://c3uay2k56y6mf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6k1vx"]
 size = Vector2(50, 50)
@@ -10,8 +6,7 @@ size = Vector2(50, 50)
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_6k1vx"]
 size = Vector2(50, 50)
 
-[node name="Wall" type="Area2D"]
-script = SubResource("GDScript_6k1vx")
+[node name="Wall" type="StaticBody2D"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_6k1vx")
