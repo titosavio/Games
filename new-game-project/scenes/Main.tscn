@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://ot3ll0d2gmdi"]
+
+[ext_resource type="Script" uid="uid://ckpw7cktii0ue" path="res://scripts/Main.gd" id="1_rarhs"]
+[ext_resource type="PackedScene" uid="uid://ccniks3ikqf7r" path="res://scenes/UI.tscn" id="2_vcsgt"]
+[ext_resource type="PackedScene" uid="uid://evgs2en8b83r" path="res://scenes/Player.tscn" id="3_c01mt"]
+[ext_resource type="PackedScene" uid="uid://ddsrl6p7cav3j" path="res://scenes/Enemy.tscn" id="4_nxtc6"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_rarhs")
+
+[node name="Ui" parent="." instance=ExtResource("2_vcsgt")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("3_c01mt")]
+position = Vector2(107, 108)
+
+[node name="Enemies" type="Node2D" parent="."]
+position = Vector2(73, 74)
+
+[node name="Enemy1" parent="Enemies" instance=ExtResource("4_nxtc6")]
+position = Vector2(46.000004, -39)
+rotation = -6.021417
+enemy_id = ""
+base_speed = 45.0
+
+[node name="Enemy2" parent="Enemies" instance=ExtResource("4_nxtc6")]
+position = Vector2(-45, -44)
+enemy_id = ""
+base_speed = 45.0
+
+[node name="Enemy3" parent="Enemies" instance=ExtResource("4_nxtc6")]
+position = Vector2(3, -53)
+enemy_id = ""
+base_speed = 45.0
