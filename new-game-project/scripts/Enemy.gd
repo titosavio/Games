@@ -152,19 +152,18 @@ func _draw():
 		var q := PhysicsRayQueryParameters2D.create(from, to)
 		q.collision_mask = vision_collision_mask
 		q.exclude = [self]
+		q.collide_with_areas = false
+		q.collide_with_bodies = true
 
 		var hit := space.intersect_ray(q)
 
-		var end_point_world := to
+		var end_world := to
 		if not hit.is_empty():
-			end_point_world = hit["position"]
+			end_world = hit["position"]
 
-		# _draw() usa coordenadas locais:
-		points.append(to_local(end_point_world))
-
-	# contorno + preenchimento
-	for j in range(points.size() - 1):
-		draw_line(points[j], points[j + 1], Color(1, 1, 0, 0.9), 2.0)
+		points.append(to_local(end_world))
 
 	draw_colored_polygon(points, Color(1, 1, 0, 0.2))
+	for j in range(points.size() - 1):
+		draw_line(points[j], points[j + 1], Color(1, 1, 0, 0.9), 2.0)
 	draw_line(points[-1], Vector2.ZERO, Color(1, 1, 0, 0.9), 2.0)
