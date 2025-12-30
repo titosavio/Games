@@ -4,11 +4,12 @@ class_name Enemy
 @export var enemy_id := ""
 @export var base_speed := 45.0
 
-@export var follow_radius := 220.0     # começa a seguir quando perto
-@export var stop_distance := 14.0      # para de grudar
-@export var accel := 10.0              # “suavidade”
+@export var follow_radius := 220.0	 # começa a seguir quando perto
+@export var stop_distance := 14.0	  # para de grudar
+@export var accel := 10.0			  # “suavidade”
 
 var speed := 45.0
+var distance_to_target_at_respawn := 100
 var adversary_system: AdversarySystem
 var target: CharacterBody2D
 var spawn_pos: Vector2
@@ -72,6 +73,8 @@ func set_label_name():
 
 func on_player_respawned(player_pos: Vector2) -> void:
     velocity = Vector2.ZERO
+    print("Player respawned at %s, enemy %s at %s" % [player_pos, enemy_id, global_position])
     var d := global_position.distance_to(player_pos)
-    if d < 40.0:
-        global_position += (global_position - player_pos).normalized() * (40.0 - d)
+    if d < distance_to_target_at_respawn:
+        global_position += (global_position - player_pos).normalized() * (distance_to_target_at_respawn - d)
+        print("Enemy %s repositioned to %s after player respawn." % [enemy_id, global_position])
