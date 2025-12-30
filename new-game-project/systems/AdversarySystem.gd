@@ -23,7 +23,8 @@ func register_kill(enemy_id: String, context: String) -> AdversaryProfile:
 
 	a.memories.append(context)
 
-	a.full_name = "%s (rank %d) %s" % [a.name, a.rank, "-".join(a.traits)]
+	var trait_str := a.traits[-1] if a.traits.size() > 0 else ""
+	a.full_name = "%s (rank %d) %s" % [a.name, a.rank, trait_str]
 	return a
 
 func get_last_adversary() -> AdversaryProfile:

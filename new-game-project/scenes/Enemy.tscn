@@ -14,8 +14,6 @@ size = Vector2(23, 23)
 
 [node name="Enemy" type="CharacterBody2D"]
 script = ExtResource("1_3gvst")
-enemy_id = null
-base_speed = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_2qkhh")

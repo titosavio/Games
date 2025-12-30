@@ -7,6 +7,7 @@
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_rarhs")
+resolution = Vector2i(2500, 1500)
 
 [node name="Ui" parent="." instance=ExtResource("2_vcsgt")]
 
@@ -21,15 +22,9 @@ position = Vector2(73, 74)
 [node name="Enemy1" parent="Enemies" instance=ExtResource("4_nxtc6")]
 position = Vector2(46.000004, -39)
 rotation = -6.021417
-enemy_id = ""
-base_speed = 45.0
 
 [node name="Enemy2" parent="Enemies" instance=ExtResource("4_nxtc6")]
 position = Vector2(-45, -44)
-enemy_id = ""
-base_speed = 45.0
 
 [node name="Enemy3" parent="Enemies" instance=ExtResource("4_nxtc6")]
 position = Vector2(3, -53)
-enemy_id = ""
-base_speed = 45.0
