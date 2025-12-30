@@ -9,6 +9,7 @@ size = Vector2(32, 32)
 size = Vector2(32, 32)
 
 [node name="Player" type="CharacterBody2D"]
+visibility_layer = 7
 script = ExtResource("1_p0vlq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

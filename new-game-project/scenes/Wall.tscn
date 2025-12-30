@@ -12,4 +12,5 @@ size = Vector2(50, 50)
 shape = SubResource("RectangleShape2D_6k1vx")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visibility_layer = 2
 texture = SubResource("PlaceholderTexture2D_6k1vx")
