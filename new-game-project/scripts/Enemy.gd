@@ -116,13 +116,23 @@ func can_see_target() -> bool:
 
 func has_line_of_sight(world_point: Vector2) -> bool:
 	var space := get_world_2d().direct_space_state
-	var q := PhysicsRayQueryParameters2D.create(global_position, world_point)
+	var origin := global_position + facing_dir.normalized() * 6.0
+
+	var q := PhysicsRayQueryParameters2D.create(origin, world_point)
 	q.collision_mask = vision_collision_mask
-	q.exclude = [self] # evita acertar o próprio inimigo
+	q.exclude = [self]
+	q.exclude += get_children()
+	q.collide_with_areas = true
+	q.collide_with_bodies = true
+	q.hit_from_inside = true
 
 	var hit := space.intersect_ray(q)
-	# se não bateu em nada, visão livre
-	return hit.is_empty()
+
+	if hit.is_empty():
+		return true
+
+	return false
+
 
 func _draw():
 	if not cone_is_visible:
