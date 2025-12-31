@@ -29,6 +29,7 @@ class_name Enemy
 
 var speed := base_speed
 var spawn_pos: Vector2
+var points_per_direction_change := 12
 
 var adversary_system: AdversarySystem
 var target: CharacterBody2D

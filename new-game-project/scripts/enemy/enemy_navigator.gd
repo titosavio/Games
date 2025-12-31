@@ -19,6 +19,11 @@ const RETURN_CONFIRM_FRAMES := 6
 var path: Array[Vector2] = []
 var path_i := 0
 
+# Arco de investigação
+var arc_degrees := 90.0
+var investigate_arc: Array[Vector2] = []
+var investigate_arc_i := 0
+
 var path_line_color: Color = Color(0, 1, 1, 0.9)
 var path_point_color: Color = Color(1, 0.2, 0.2, 0.9)
 
@@ -216,3 +221,42 @@ func set_direct_target(p: Vector2) -> void:
 	path = [p]
 	path_i = 0
 
+
+func build_direction_change_arc(from_direction: float, to_direction: float, angle_points: int = enemy_owner.points_per_direction_change) -> Array[Vector2]:
+	var calculated_arc: Array[Vector2] = []
+	for i in range(angle_points):
+		var t: float = float(i) / max(angle_points - 1, 1)
+		var angle := lerp_angle(from_direction, to_direction, t)
+		var dir := Vector2.RIGHT.rotated(angle)
+		var point := enemy_owner.global_position + dir * 60.0
+		calculated_arc.append(point)
+	return calculated_arc
+
+# Calcula um arco de investigação entre dois pontos
+func build_investigate_arc() -> void:
+	investigate_arc.clear()
+	investigate_arc_i = 0
+	var current_angle = enemy_owner.motor.facing_dir.angle()
+	var angle_start: float = current_angle - deg_to_rad(arc_degrees / 2.0)
+	var angle_end: float = current_angle + deg_to_rad(arc_degrees / 2.0)
+	var arc_points := int(enemy_owner.investigate_time * 24)
+	var rotate_points := int(arc_points * 0.25)
+	var arc_only_points := arc_points - rotate_points
+	investigate_arc += build_direction_change_arc(
+		current_angle,
+		angle_start,
+		rotate_points
+	)
+	investigate_arc += build_direction_change_arc(
+		angle_start,
+		angle_end,
+		arc_only_points
+	)
+
+# Avança ao longo do arco conforme o tempo de investigação
+func investigate_target(progress: float) -> Vector2:
+	if investigate_arc.is_empty():
+		return enemy_owner.global_position
+	var idx: int = clamp(int(progress * (investigate_arc.size() - 1)), 0, investigate_arc.size() - 1)
+	investigate_arc_i = idx
+	return investigate_arc[idx]

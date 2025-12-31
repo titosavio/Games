@@ -14,6 +14,7 @@ var investigate_time := 2.0
 var last_seen_pos: Vector2 = Vector2.ZERO
 var last_seen_t := -999.0
 var investigate_until := -999.0
+var investigate_start_t := -999.0	
 
 var patrol_speed_mult := 0.5
 
@@ -50,6 +51,7 @@ class EnemyIntent:
 		speed_mult = sm
 
 func update_intent() -> EnemyIntent:
+
 	sees = enemy_owner.vision.can_see_target()
 	if sees:
 		last_seen_pos = enemy_owner.target.global_position
@@ -65,6 +67,11 @@ func update_intent() -> EnemyIntent:
 	if intent.clear_nav_path:
 		enemy_owner.nav.clear_path()
 
+	# Detecta entrada em INVESTIGATE e calcula arco
+	if state == State.INVESTIGATE and last_state != State.INVESTIGATE:
+		enemy_owner.nav.build_investigate_arc()
+		investigate_start_t = _now()
+
 	match intent.state:
 		State.PATROL:
 			speed_mult = patrol_speed_mult
@@ -72,21 +79,23 @@ func update_intent() -> EnemyIntent:
 				enemy_owner.global_position,
 				enemy_owner.spawn_pos,
 				enemy_owner.motor.facing_dir,
-				)
-
+			)
 		State.CHASE:
 			speed_mult = 1.0
-
 		State.INVESTIGATE:
 			speed_mult = 0.75
-
+			var progress: float = clamp((_now() - investigate_start_t) / investigate_time, 0.0, 1.0)
+			var arrived := _has_arrived(last_seen_pos)
+			if arrived:
+				var look_pt = enemy_owner.nav.investigate_target(progress) # ponto no arco
+				enemy_owner.motor.look_towards(look_pt)
+				desired_point = enemy_owner.global_position # não anda
 		State.RETURN:
 			speed_mult = 0.8
 			desired_point = enemy_owner.nav.return_target(
 				enemy_owner.global_position,
 				enemy_owner.spawn_pos,
 			)
-
 	return EnemyIntent.new(intent.state, desired_point, speed_mult)
 
 	
@@ -109,21 +118,28 @@ func _tick() -> Intent:
 		State.CHASE:
 			# se nao ve mais o player, vai para investigar
 			if (now - last_seen_t) > chase_timeout or enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius:
-				last_seen_pos = enemy_owner.global_position # fixa a posicao atual
+				investigate_start_t = now
+
+				# ajuste para nao ficar andando em circulos
+				if enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius:
+					last_seen_pos = enemy_owner.global_position
+
 				return Intent.new(State.INVESTIGATE, now + investigate_time, last_seen_pos, true)
 
 			# continua a perseguir até ver o player ou timeout
 			return Intent.new(state, investigate_until, last_seen_pos, true)
 
 		State.INVESTIGATE:
-			# se ja chegou, e o tempo de investigar acabou, volta ao spawn
-			if now > investigate_until and enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius + 5.0:
+			var arrived := _has_arrived(last_seen_pos)
+			if now > investigate_until and arrived:
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
-			if enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius + 5.0:
-				# Já chegou, não precisa mover
-				return Intent.new(state, investigate_until, enemy_owner.global_position, false)
-			# continua a investigar
-			return Intent.new(state, investigate_until, last_seen_pos, false)
+
+			# enquanto não chegou no last_seen_pos, vai até lá
+			if not arrived:
+				return Intent.new(state, investigate_until, last_seen_pos, false)
+
+			# chegou: fica no arco (update_intent decide o target), então não força movimento base
+			return Intent.new(state, investigate_until, Vector2.ZERO, false)
 
 		State.RETURN:
 			# se chegou ao spawn, volta a patrulhar
@@ -138,3 +154,6 @@ func _tick() -> Intent:
 
 func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
+
+func _has_arrived(target: Vector2) -> bool:
+	return enemy_owner.global_position.distance_to(target) < enemy_owner.shape_radius + 5.0
