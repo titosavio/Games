@@ -95,10 +95,6 @@ func update_intent() -> EnemyIntent:
 				desired_point = enemy_owner.global_position # não anda
 		State.RETURN:
 			speed_mult = 0.8
-			# desired_point = enemy_owner.nav.return_target(
-			# 	enemy_owner.global_position,
-			# 	enemy_owner.spawn_pos,
-			# )
 			enemy_owner.nav_agent.target_position = enemy_owner.spawn_pos
 			desired_point = enemy_owner.nav_agent.get_next_path_position()
 			enemy_owner.nav_agent.debug_enabled = true

@@ -61,46 +61,6 @@ func patrol_target(cur_pos: Vector2, spawn_pos: Vector2, facing_dir: Vector2) ->
 			target_pt = path[path_i]
 	return target_pt
 
-func return_target(cur_pos: Vector2, spawn_pos: Vector2) -> Vector2:
-	# sempre atualiza “modo” bloqueado/limpo com histerese
-	var blocked := _blocked_to_spawn(cur_pos, spawn_pos)
-
-	if blocked:
-		return_blocked_frames += 1
-		return_clear_frames = 0
-	else:
-		return_clear_frames += 1
-		return_blocked_frames = 0
-
-
-	# modo caminho
-	if return_blocked_frames >= RETURN_CONFIRM_FRAMES:
-		var trivial := path.size() == 1 and path[0].distance_to(spawn_pos) < 0.1
-		if path.is_empty() or path_i >= path.size() or trivial:
-			_build_return_path()
-
-		var pt := path[path_i]
-		if cur_pos.distance_to(pt) <= return_reach_eps:
-			path_i = min(path_i + 1, path.size() - 1)
-			pt = path[path_i]
-
-		return pt
-
-
-	# modo direto (mas ainda “desenha”)
-	if return_clear_frames >= RETURN_CONFIRM_FRAMES:
-		path = [spawn_pos]
-		path_i = 0
-		return spawn_pos
-
-	# indeciso: mantém o que já estava fazendo
-	if path.is_empty():
-		path = [spawn_pos]
-		path_i = 0
-		return spawn_pos
-
-	return path[path_i]
-
 func build_patrol_path(spawn_pos: Vector2, facing_dir: Vector2) -> void:
 	path.clear()
 	path_i = 0
@@ -120,23 +80,6 @@ func build_patrol_path(spawn_pos: Vector2, facing_dir: Vector2) -> void:
 	for i in range(path.size() - 2, -1, -1):
 		path.append(path[i])
 	path.append(spawn_pos)
-
-func _build_return_path():
-	path.clear()
-	path_i = 0
-
-	var cur := enemy_owner.global_position
-	for _k in range(return_points_max):
-		var to_spawn := enemy_owner.spawn_pos - cur
-		if to_spawn.length() <= return_reach_eps:
-			break
-
-		var pref := to_spawn.normalized()
-		var next := _pick_reachable_point(cur, pref) # já usa ray_hit/nav_mask
-		path.append(next)
-		cur = next
-
-	path.append(enemy_owner.spawn_pos) # sempre termina no spawn
 
 func _pick_reachable_point(from: Vector2, preferred_dir: Vector2) -> Vector2:
 	var tries := 10
@@ -161,17 +104,6 @@ func _pick_reachable_point(from: Vector2, preferred_dir: Vector2) -> Vector2:
 		return from + dir2 * 40.0
 
 	return best
-
-func _blocked_to_spawn(cur_pos: Vector2, spawn_pos: Vector2) -> bool:
-	var dir := enemy_owner.motor.facing_dir
-	if dir.length() < 0.01:
-		dir = (spawn_pos - cur_pos)
-	if dir.length() < 0.01:
-		dir = Vector2.RIGHT
-	var origin := cur_pos + dir.normalized() * 6.0
-	var hit := _ray_hit(origin, spawn_pos, nav_mask)
-	return not hit.is_empty()
-
 
 func _ray_hit(from: Vector2, to: Vector2, mask_to_check: int) -> Dictionary:
 	var space := enemy_owner.get_world_2d().direct_space_state
