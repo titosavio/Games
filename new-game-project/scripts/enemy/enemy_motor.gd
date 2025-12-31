@@ -34,5 +34,5 @@ func move_towards(point: Vector2, speed: float, delta: float) -> void:
 			await enemy_owner.get_tree().process_frame
 		facing_dir = dir
 
-	var desired := facing_dir * speed
+	var desired := dir * speed
 	enemy_owner.velocity = enemy_owner.velocity.lerp(desired, accel * delta)

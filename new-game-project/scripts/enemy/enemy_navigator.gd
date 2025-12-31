@@ -46,6 +46,8 @@ func setup(
 	return_reach_eps = return_reach_eps_val
 	return_points_max = return_points_max_val
 
+	enemy_owner.brain.connect("enter_return", Callable(self, "on_enter_return"))
+
 func patrol_target(cur_pos: Vector2, spawn_pos: Vector2, facing_dir: Vector2) -> Vector2:
 	if path.is_empty():
 		build_patrol_path(spawn_pos, facing_dir)
@@ -70,9 +72,11 @@ func return_target(cur_pos: Vector2, spawn_pos: Vector2) -> Vector2:
 		return_clear_frames += 1
 		return_blocked_frames = 0
 
+
 	# modo caminho
 	if return_blocked_frames >= RETURN_CONFIRM_FRAMES:
-		if path.is_empty() or path_i >= path.size():
+		var trivial := path.size() == 1 and path[0].distance_to(spawn_pos) < 0.1
+		if path.is_empty() or path_i >= path.size() or trivial:
 			_build_return_path()
 
 		var pt := path[path_i]
@@ -81,6 +85,7 @@ func return_target(cur_pos: Vector2, spawn_pos: Vector2) -> Vector2:
 			pt = path[path_i]
 
 		return pt
+
 
 	# modo direto (mas ainda “desenha”)
 	if return_clear_frames >= RETURN_CONFIRM_FRAMES:
@@ -265,3 +270,9 @@ func investigate_target(progress: float) -> Vector2:
 	var idx: int = clamp(int(progress * (investigate_arc.size() - 1)), 0, investigate_arc.size() - 1)
 	investigate_arc_i = idx
 	return investigate_arc[idx]
+
+func on_enter_return():
+	return_blocked_frames = 0
+	return_clear_frames = 0
+	path.clear()
+	path_i = 0

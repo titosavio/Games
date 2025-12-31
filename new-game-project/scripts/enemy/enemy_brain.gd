@@ -4,6 +4,7 @@ class_name EnemyBrain
 var enemy_owner: Enemy
 
 enum State { PATROL, CHASE, INVESTIGATE, RETURN }
+signal enter_return()
 
 var state: State = State.PATROL
 var last_state: State = State.PATROL
@@ -132,6 +133,7 @@ func _tick() -> Intent:
 		State.INVESTIGATE:
 			var arrived := _has_arrived(last_seen_pos)
 			if now > investigate_until and arrived:
+				emit_signal("enter_return")
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
 
 			# enquanto não chegou no last_seen_pos, vai até lá
