@@ -188,7 +188,7 @@ func _ray_hit(from: Vector2, to: Vector2, mask_to_check: int) -> Dictionary:
 	return space.intersect_ray(q)
 
 func draw_path(canvas: Node2D, cur_pos: Vector2, state: int) -> void:
-	if state not in [Enemy.State.PATROL, Enemy.State.RETURN] or path.is_empty():
+	if state not in [EnemyBrain.State.PATROL, EnemyBrain.State.RETURN] or path.is_empty():
 		return
 
 	var prev := enemy_owner.to_local(cur_pos)

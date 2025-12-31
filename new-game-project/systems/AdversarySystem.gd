@@ -30,6 +30,8 @@ func register_kill(enemy_id: String, context: String) -> AdversaryProfile:
 func get_last_adversary() -> AdversaryProfile:
 	if last_killer_id == "":
 		return null
+	if not adversaries.has(last_killer_id):
+		return null
 	return adversaries[last_killer_id]
 
 

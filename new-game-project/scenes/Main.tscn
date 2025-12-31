@@ -27,45 +27,7 @@ enemy_id = ""
 base_speed = 45.0
 accel = 10.0
 follow_radius = 220.0
-nav_mask = 3
-patrol_step = 140.0
-patrol_points = 4
-patrol_reach_eps = 10.0
-patrol_speed_mult = 0.55
-investigate_time = 2.0
-chase_timeout = 3.0
-return_reach_eps = 12.0
-return_points_max = 8
-spawn_index = 0
-cone_is_visible = true
-path_debug_visible = true
-
-[node name="Enemy2" parent="Enemies" instance=ExtResource("4_nxtc6")]
-position = Vector2(-45, -44)
-enemy_id = ""
-base_speed = 45.0
-accel = 10.0
-follow_radius = 220.0
-nav_mask = 3
-patrol_step = 140.0
-patrol_points = 4
-patrol_reach_eps = 10.0
-patrol_speed_mult = 0.55
-investigate_time = 2.0
-chase_timeout = 3.0
-return_reach_eps = 12.0
-return_points_max = 8
-spawn_index = 0
-cone_is_visible = true
-path_debug_visible = true
-
-[node name="Enemy3" parent="Enemies" instance=ExtResource("4_nxtc6")]
-position = Vector2(3, -53)
-enemy_id = ""
-base_speed = 45.0
-accel = 10.0
-follow_radius = 220.0
-nav_mask = 3
+nav_mask = 6
 patrol_step = 140.0
 patrol_points = 4
 patrol_reach_eps = 10.0

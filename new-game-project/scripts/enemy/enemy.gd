@@ -1,8 +1,6 @@
 extends CharacterBody2D
 class_name Enemy
 
-enum State { PATROL, CHASE, INVESTIGATE, RETURN }
-
 @export var enemy_id := ""
 @export var base_speed := 45.0
 @export var accel := 10.0
@@ -29,13 +27,8 @@ enum State { PATROL, CHASE, INVESTIGATE, RETURN }
 @export var cone_is_visible := true
 @export var path_debug_visible := true
 
-var state: State = State.PATROL
 var speed := base_speed
 var spawn_pos: Vector2
-
-var last_seen_pos := Vector2.ZERO
-var last_seen_t := -999.0
-var investigate_until := -999.0
 
 var adversary_system: AdversarySystem
 var target: CharacterBody2D
@@ -89,49 +82,9 @@ func _physics_process(delta):
 		move_and_slide()
 		return
 
-	# sensing
-	var sees := vision.can_see_target()
-	if sees:
-		last_seen_pos = target.global_position
-		last_seen_t = _now()
-
-	# state transitions + intent
-	var intent := brain.tick(
-		state,
-		sees,
-		last_seen_pos,
-		last_seen_t,
-		investigate_until,
-		target.global_position,
-		spawn_pos
-	)
-	state = intent.state
-	investigate_until = intent.investigate_until
-
-	# navigation target point
-	var desired_point := intent.move_target
-	var speed_mult := 1.0
-
-	if intent.clear_nav_path:
-		nav.clear_path()
-
-	match state:
-		State.PATROL:
-			speed_mult = patrol_speed_mult
-			desired_point = nav.patrol_target(global_position, spawn_pos, motor.facing_dir) # ou facing_dir
-
-		State.CHASE:
-			speed_mult = 1.0
-			# desired_point já veio do brain (player se vê, last_seen se não vê)
-
-		State.INVESTIGATE:
-			speed_mult = 0.75
-			# desired_point já veio do brain (last_seen)
-
-		State.RETURN:
-			speed_mult = 0.8
-			desired_point = nav.return_target(global_position, spawn_pos)
-
+	var intent := brain.update_intent()
+	var desired_point := intent.desired_point
+	var speed_mult := intent.speed_mult
 
 	_move_towards(desired_point, speed * speed_mult, delta)
 	move_and_slide()
@@ -167,9 +120,9 @@ func _draw():
 	if cone_is_visible:
 		vision.draw_cone()
 	if path_debug_visible:
-		nav.draw_path(self, global_position, state)
-	if state == State.INVESTIGATE and last_seen_pos != Vector2.ZERO:
-		draw_circle(to_local(last_seen_pos), 6.0, Color(1, 0, 0, 0.7))
-	if state == State.CHASE and not vision.can_see_target():
-		draw_circle(to_local(last_seen_pos), 4.0, Color(1, 1, 0, 0.7))
+		nav.draw_path(self, global_position, brain.state)
+	if brain.state == brain.State.INVESTIGATE and brain.last_seen_pos != Vector2.ZERO:
+		draw_circle(to_local(brain.last_seen_pos), 6.0, Color(1, 0, 0, 0.7))
+	if brain.state == brain.State.CHASE and not vision.can_see_target():
+		draw_circle(to_local(brain.last_seen_pos), 4.0, Color(1, 1, 0, 0.7))
 		
