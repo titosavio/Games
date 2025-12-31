@@ -7,8 +7,8 @@ size = Vector2(50, 50)
 size = Vector2(50, 50)
 
 [node name="Wall" type="StaticBody2D"]
-visibility_layer = 2
-collision_layer = 2
+visibility_layer = 6
+collision_layer = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visibility_layer = 2
