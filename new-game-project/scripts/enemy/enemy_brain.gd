@@ -124,11 +124,13 @@ func _tick() -> Intent:
 			return Intent.new(state, investigate_until, last_seen_pos, true)
 
 		State.INVESTIGATE:
-			# se chegou ao local investigado e o tempo acabou, volta a patrulhar
+			# se ja chegou, e o tempo de investigar acabou, volta ao spawn
 			if now > investigate_until and enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
-
-			# investiga sempre no last_seen_pos
+			if enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
+				# Já chegou, não precisa mover
+				return Intent.new(state, investigate_until, enemy_owner.global_position, false)
+			# continua a investigar
 			return Intent.new(state, investigate_until, last_seen_pos, false)
 
 		State.RETURN:
