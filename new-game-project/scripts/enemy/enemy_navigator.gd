@@ -215,3 +215,4 @@ func clear_path() -> void:
 func set_direct_target(p: Vector2) -> void:
 	path = [p]
 	path_i = 0
+
