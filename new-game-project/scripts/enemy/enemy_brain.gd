@@ -116,26 +116,30 @@ func _tick() -> Intent:
 			return Intent.new(state, investigate_until, Vector2.ZERO, false)
 
 		State.CHASE:
+			# se nao ve mais o player, vai para investigar
 			if (now - last_seen_t) > chase_timeout:
 				return Intent.new(State.INVESTIGATE, now + investigate_time, last_seen_pos, true)
 
+			# continua a perseguir até ver o player ou timeout
 			return Intent.new(state, investigate_until, last_seen_pos, true)
 
 		State.INVESTIGATE:
-			if enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
-				return Intent.new(State.RETURN, investigate_until, enemy_owner.global_position, false)
-
-			if now > investigate_until:
+			# se chegou ao local investigado e o tempo acabou, volta a patrulhar
+			if now > investigate_until and enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
 
 			# investiga sempre no last_seen_pos
 			return Intent.new(state, investigate_until, last_seen_pos, false)
 
 		State.RETURN:
+			# se chegou ao spawn, volta a patrulhar
 			if enemy_owner.global_position.distance_to(enemy_owner.spawn_pos) < shape_radius + 5.0:
 				return Intent.new(State.PATROL, investigate_until, Vector2.ZERO, true)
+
+			# continua a voltar ao spawn
 			return Intent.new(state, investigate_until, enemy_owner.spawn_pos, false)
 
+	# default fallback
 	return Intent.new(state, investigate_until, enemy_owner.spawn_pos, false)
 
 func _now() -> float:
