@@ -81,10 +81,11 @@ func _physics_process(delta):
 			if sees:
 				_chase(delta)
 			else:
-				_chase(delta) # mantém impulso
+				_move_towards(last_seen_pos, speed, delta)
 				if _since(last_seen_t) > chase_timeout:
 					state = State.INVESTIGATE
 					investigate_until = _now() + investigate_time
+
 
 		State.INVESTIGATE:
 			if sees:
@@ -188,11 +189,9 @@ func has_line_of_sight(world_point: Vector2) -> bool:
 
 
 func _draw():
-	if cone_is_visible:
-		_draw_cone()
-
-	if path_debug_visible:
-		_draw_path()
+	_draw_cone()
+	_draw_path()
+	_draw_investigation_point()
 
 func _draw_cone():
 	if not cone_is_visible:
@@ -235,7 +234,7 @@ func _draw_cone():
 	draw_line(points[-1], Vector2.ZERO, Color(1, 1, 0, 0.9), 2.0)
 
 func _draw_path():
-	if path.is_empty():
+	if not path_debug_visible or path.is_empty():
 		return
 
 	# linha começa no spawn
@@ -249,6 +248,12 @@ func _draw_path():
 	# marca o waypoint atual
 	var idx: int = clamp(path_i, 0, path.size() - 1)
 	draw_circle(to_local(path[idx]), 5.0, Color(1, 0.2, 0.2, 0.9))
+
+func _draw_investigation_point():
+	if state == State.INVESTIGATE and not last_seen_pos == Vector2.ZERO:
+		draw_circle(to_local(last_seen_pos), 6.0, Color(1, 0, 0, 0.7))
+	if state == State.CHASE and can_see_target() == false:
+		draw_circle(to_local(last_seen_pos), 4.0, Color(1, 1, 0, 0.7))
 
 
 func _build_patrol_path():
@@ -323,7 +328,7 @@ func _patrol(delta):
 			_build_patrol_path()
 
 func _chase(delta):
-	if not _ray_hit(global_position, target.global_position, sight_mask).is_empty():
+	if not has_line_of_sight(target.global_position):
 		state = State.INVESTIGATE
 		investigate_until = _now() + investigate_time
 		return
