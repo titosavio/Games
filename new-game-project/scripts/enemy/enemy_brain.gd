@@ -19,10 +19,10 @@ var patrol_speed_mult := 0.5
 
 var sees: bool = false
 
-func setup(o: Enemy, chase_timeout_val: float, investigate_time_val: float) -> void:
+func setup(o: Enemy) -> void:
 	enemy_owner = o
-	chase_timeout = chase_timeout_val
-	investigate_time = investigate_time_val
+	chase_timeout = enemy_owner.chase_timeout
+	investigate_time = enemy_owner.investigate_time
 	last_state = State.PATROL
 
 	patrol_speed_mult = enemy_owner.patrol_speed_mult

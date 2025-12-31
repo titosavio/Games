@@ -17,7 +17,7 @@ class_name Enemy
 @export var patrol_speed_mult := 0.55
 
 @export var investigate_time := 2.0
-@export var chase_timeout := 3.0
+@export var chase_timeout := 1.0
 @export var return_reach_eps := 12.0
 @export var return_points_max := 8
 
@@ -59,7 +59,7 @@ func _ready():
 	nav.setup(self, nav_mask, patrol_step, patrol_points, patrol_reach_eps, return_reach_eps, return_points_max)
 	nav.build_patrol_path(spawn_pos, motor.facing_dir)
 
-	brain.setup(self, chase_timeout, investigate_time)
+	brain.setup(self)
 	vision.setup(self)
 
 	motor.setup(self, accel)
