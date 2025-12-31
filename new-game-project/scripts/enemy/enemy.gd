@@ -33,6 +33,9 @@ var spawn_pos: Vector2
 var adversary_system: AdversarySystem
 var target: CharacterBody2D
 
+var colissionShape: CollisionShape2D
+var shape_radius := 0.0
+
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var label_name: Label = $Label
 
@@ -67,6 +70,13 @@ func _ready():
 func setup(system: AdversarySystem, player: CharacterBody2D) -> void:
 	adversary_system = system
 	target = player
+
+	colissionShape = get_node_or_null("CollisionShape2D")
+	if colissionShape != null and colissionShape.shape is CircleShape2D:
+		shape_radius = colissionShape.shape.radius
+	elif colissionShape != null and colissionShape.shape is RectangleShape2D:
+		shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
+
 
 	adversary_system.get_or_create(enemy_id)
 	_apply_stats()

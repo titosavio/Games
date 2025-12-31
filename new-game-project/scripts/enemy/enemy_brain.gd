@@ -19,9 +19,6 @@ var patrol_speed_mult := 0.5
 
 var sees: bool = false
 
-var colissionShape: CollisionShape2D
-var shape_radius := 0.0
-
 func setup(o: Enemy) -> void:
 	enemy_owner = o
 	chase_timeout = enemy_owner.chase_timeout
@@ -29,12 +26,6 @@ func setup(o: Enemy) -> void:
 	last_state = State.PATROL
 
 	patrol_speed_mult = enemy_owner.patrol_speed_mult
-
-	colissionShape = enemy_owner.get_node_or_null("CollisionShape2D")
-	if colissionShape != null and colissionShape.shape is CircleShape2D:
-		shape_radius = colissionShape.shape.radius
-	elif colissionShape != null and colissionShape.shape is RectangleShape2D:
-		shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
 
 class Intent:
 	var state: State
@@ -125,9 +116,9 @@ func _tick() -> Intent:
 
 		State.INVESTIGATE:
 			# se ja chegou, e o tempo de investigar acabou, volta ao spawn
-			if now > investigate_until and enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
+			if now > investigate_until and enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius + 5.0:
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
-			if enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
+			if enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius + 5.0:
 				# Já chegou, não precisa mover
 				return Intent.new(state, investigate_until, enemy_owner.global_position, false)
 			# continua a investigar
@@ -135,7 +126,7 @@ func _tick() -> Intent:
 
 		State.RETURN:
 			# se chegou ao spawn, volta a patrulhar
-			if enemy_owner.global_position.distance_to(enemy_owner.spawn_pos) < shape_radius + 5.0:
+			if enemy_owner.global_position.distance_to(enemy_owner.spawn_pos) < enemy_owner.shape_radius + 5.0:
 				return Intent.new(State.PATROL, investigate_until, Vector2.ZERO, true)
 
 			# continua a voltar ao spawn

@@ -20,9 +20,10 @@ func move_towards(point: Vector2, speed: float, delta: float) -> void:
 
 	var dir := v / dist
 
-	# 👉 anti-flicker: só atualiza facing se movimento for relevante
-	if dir.dot(facing_dir) < 0.98:
+	# 👉 anti-flicker: só atualiza facing se movimento for relevante e nao estive em cima
+	if dir.dot(facing_dir) < 0.98 and enemy_owner.global_position.distance_to(point) > enemy_owner.shape_radius + 5.0:
 		facing_dir = dir
+
 
 	var desired := facing_dir * speed
 	enemy_owner.velocity = enemy_owner.velocity.lerp(desired, accel * delta)
