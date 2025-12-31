@@ -19,6 +19,9 @@ var patrol_speed_mult := 0.5
 
 var sees: bool = false
 
+var colissionShape: CollisionShape2D
+var shape_radius := 0.0
+
 func setup(o: Enemy) -> void:
 	enemy_owner = o
 	chase_timeout = enemy_owner.chase_timeout
@@ -26,6 +29,12 @@ func setup(o: Enemy) -> void:
 	last_state = State.PATROL
 
 	patrol_speed_mult = enemy_owner.patrol_speed_mult
+
+	colissionShape = enemy_owner.get_node_or_null("CollisionShape2D")
+	if colissionShape != null and colissionShape.shape is CircleShape2D:
+		shape_radius = colissionShape.shape.radius
+	elif colissionShape != null and colissionShape.shape is RectangleShape2D:
+		shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
 
 class Intent:
 	var state: State
@@ -101,13 +110,6 @@ func _tick() -> Intent:
 
 	if sees:
 		return Intent.new(State.CHASE, investigate_until, player_pos, true)
-
-	var colissionShape := enemy_owner.get_node_or_null("CollisionShape2D")
-	var shape_radius := 0.0
-	if colissionShape != null and colissionShape.shape is CircleShape2D:
-		shape_radius = colissionShape.shape.radius
-	elif colissionShape != null and colissionShape.shape is RectangleShape2D:
-		shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
 
 	match state:
 		State.PATROL:
