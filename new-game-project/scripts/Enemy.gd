@@ -10,7 +10,7 @@ var state: State = State.PATROL
 @export var follow_radius := 220.0     # começa a seguir quando perto
 @export var follow_angle := 90.0      # ângulo de visão
 var num_cone_segments := 18
-var vision_collision_mask := 2  # 1: player, 2: paredes, 3: chao
+var sight_mask := 2  # 1: player, 2: paredes, 3: chao
 var facing_dir := Vector2.RIGHT
 
 @export var cone_is_visible := true  # mostra o cone de visão
@@ -164,7 +164,7 @@ func can_see_target() -> bool:
 
 func _get_view_mask(origin, world_point: Vector2) -> PhysicsRayQueryParameters2D:
 	var q := PhysicsRayQueryParameters2D.create(origin, world_point)
-	q.collision_mask = vision_collision_mask
+	q.collision_mask = sight_mask
 	q.exclude = [self]
 	q.exclude += get_children()
 	q.collide_with_areas = false
@@ -297,10 +297,11 @@ func _pick_reachable_point(from: Vector2, preferred_dir: Vector2) -> Vector2:
 
 	return best
 	
-func _ray_hit(from: Vector2, to: Vector2) -> Dictionary:
+func _ray_hit(from: Vector2, to: Vector2, mask_to_check: int = nav_mask) -> Dictionary:
+	# checks for collision along the ray
 	var space := get_world_2d().direct_space_state
 	var q := PhysicsRayQueryParameters2D.create(from, to)
-	q.collision_mask = nav_mask
+	q.collision_mask = mask_to_check
 	q.exclude = [self, $KillZone]
 	q.collide_with_areas = false
 	q.collide_with_bodies = true
@@ -322,6 +323,10 @@ func _patrol(delta):
 			_build_patrol_path()
 
 func _chase(delta):
+	if not _ray_hit(global_position, target.global_position, sight_mask).is_empty():
+		state = State.INVESTIGATE
+		investigate_until = _now() + investigate_time
+		return
 	_move_towards(target.global_position, speed, delta)
 
 func _investigate(delta):
