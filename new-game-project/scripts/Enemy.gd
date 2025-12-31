@@ -41,14 +41,24 @@ var last_seen_pos := Vector2.ZERO
 var last_seen_t := -999.0
 var investigate_until := -999.0
 
+@export var spawn_index := 0
+
 
 @onready var label_name: Label = $Label
 
 func _ready():
-	if enemy_id == "":
-		enemy_id = str(get_instance_id())
-		
 	spawn_pos = global_position
+	var room_id: String = get_parent().get("room_id") if get_parent().get("room_id") != null else "unknown_room"
+
+	if enemy_id == "":
+		var key := "enemy:%s:%d:%d:%d" % [
+			str(room_id),
+			int(spawn_pos.x),
+			int(spawn_pos.y),
+			int(spawn_index),
+		]
+		enemy_id = "E_%s" % hash(key)
+
 	_build_patrol_path()
 
 func _process(_delta):
@@ -57,6 +67,7 @@ func _process(_delta):
 
 func setup(system: AdversarySystem, player: CharacterBody2D) -> void:
 	adversary_system = system
+	adversary_system.get_or_create(enemy_id)
 	target = player
 	_apply_stats()
 

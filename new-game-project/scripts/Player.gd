@@ -3,8 +3,23 @@ class_name Player
 
 @export var speed := 250.0
 @export var respawn_pos := Vector2(120, 120)
+@export var level := 1
 
 signal died(respawn_pos: Vector2)
+
+func to_dict() -> Dictionary:
+	return {
+		"pos": [global_position.x, global_position.y],
+		"speed": speed,
+		"level": level,
+	}
+
+func from_dict(d: Dictionary) -> void:
+	var p = d.get("pos", null)
+	if p != null and p.size() == 2:
+		global_position = Vector2(float(p[0]), float(p[1]))
+	speed = float(d.get("speed", speed))
+	level = int(d.get("level", level))
 
 func _physics_process(_delta):
 	var dir = Vector2(
