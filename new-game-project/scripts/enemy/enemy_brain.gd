@@ -107,15 +107,23 @@ func _tick() -> Intent:
 			return Intent.new(state, investigate_until, Vector2.ZERO, false)
 
 		State.CHASE:
-			# NÃO vê: vai no ÚLTIMO ponto visto (isso mata o "seguir atrás da parede")
 			if (now - last_seen_t) > chase_timeout:
 				return Intent.new(State.INVESTIGATE, now + investigate_time, last_seen_pos, true)
 
 			return Intent.new(state, investigate_until, last_seen_pos, true)
 
 		State.INVESTIGATE:
+			var colissionShape := enemy_owner.get_node_or_null("CollisionShape2D")
+			var shape_radius := 0.0
+			if colissionShape != null and colissionShape.shape is CircleShape2D:
+				shape_radius = colissionShape.shape.radius
+			elif colissionShape != null and colissionShape.shape is RectangleShape2D:
+				shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
+
+			if enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
+				return Intent.new(State.RETURN, investigate_until, enemy_owner.global_position, false)
+
 			if now > investigate_until:
-				# ao entrar em RETURN, limpa path e deixa o Navigator decidir
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.spawn_pos, true)
 
 			# investiga sempre no last_seen_pos
