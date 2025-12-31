@@ -11,4 +11,4 @@ func _ready():
 func _on_player_died(respawn_pos: Vector2) -> void:
 	for e in $Enemies.get_children():
 		if e is Enemy:
-			e.on_player_respawned(respawn_pos)
+			e.on_player_died(respawn_pos)

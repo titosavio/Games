@@ -48,7 +48,7 @@ func _ready():
 	if enemy_id == "":
 		enemy_id = str(get_instance_id())
 		
-	spawn_pos= global_position
+	spawn_pos = global_position
 	_build_patrol_path()
 
 func _process(_delta):
@@ -132,9 +132,16 @@ func set_label_name():
 	var data = adversary_system.get_or_create(enemy_id)
 	label_name.text = data.full_name
 
-func on_player_respawned(player_pos: Vector2) -> void:
+func _reset_to_spawn():
+	global_position = spawn_pos
 	velocity = Vector2.ZERO
-	print("Player respawned at %s, enemy %s at %s" % [player_pos, enemy_id, global_position])
+	state = State.PATROL
+	last_seen_pos = Vector2.ZERO
+	_build_patrol_path()
+
+func on_player_died(player_pos: Vector2) -> void:
+	velocity = Vector2.ZERO
+	_reset_to_spawn()
 	var d := global_position.distance_to(player_pos)
 	if d < distance_to_target_at_respawn:
 		global_position += (global_position - player_pos).normalized() * (distance_to_target_at_respawn - d)
