@@ -108,7 +108,8 @@ func _tick() -> Intent:
 
 		State.CHASE:
 			# se nao ve mais o player, vai para investigar
-			if (now - last_seen_t) > chase_timeout:
+			if (now - last_seen_t) > chase_timeout or enemy_owner.global_position.distance_to(last_seen_pos) < enemy_owner.shape_radius:
+				last_seen_pos = enemy_owner.global_position # fixa a posicao atual
 				return Intent.new(State.INVESTIGATE, now + investigate_time, last_seen_pos, true)
 
 			# continua a perseguir até ver o player ou timeout
