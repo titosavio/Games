@@ -11,7 +11,7 @@ visibility_layer = 6
 collision_layer = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visibility_layer = 2
+visibility_layer = 6
 shape = SubResource("RectangleShape2D_6k1vx")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

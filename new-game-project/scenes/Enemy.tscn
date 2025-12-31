@@ -1,7 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://ddsrl6p7cav3j"]
+[gd_scene load_steps=10 format=3 uid="uid://ddsrl6p7cav3j"]
 
-[ext_resource type="Script" uid="uid://cpao5lokh6c0t" path="res://scripts/Enemy.gd" id="1_3gvst"]
+[ext_resource type="Script" uid="uid://dtymacrt036vi" path="res://scripts/enemy/enemy.gd" id="1_1vja8"]
 [ext_resource type="Script" uid="uid://cflwb8pgutjm4" path="res://scripts/KillZone.gd" id="2_55jtl"]
+[ext_resource type="Script" uid="uid://cc4tsvnhie0pm" path="res://scripts/enemy/enemy_brain.gd" id="3_1vja8"]
+[ext_resource type="Script" uid="uid://tyjkjfayhyw5" path="res://scripts/enemy/enemy_motor.gd" id="4_iwav8"]
+[ext_resource type="Script" uid="uid://bcwxpa4jdifk4" path="res://scripts/enemy/enemy_navigator.gd" id="5_1i2q2"]
+[ext_resource type="Script" uid="uid://dwsx070hiiwda" path="res://scripts/enemy/enemy_vision.gd" id="6_ly5gv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2qkhh"]
 size = Vector2(22, 22)
@@ -15,8 +19,26 @@ size = Vector2(23, 23)
 [node name="Enemy" type="CharacterBody2D"]
 visibility_layer = 7
 collision_mask = 7
-script = ExtResource("1_3gvst")
+script = ExtResource("1_1vja8")
+enemy_id = null
+base_speed = null
+follow_radius = null
 follow_angle = 180.0
+cone_is_visible = null
+path_debug_visible = null
+stop_distance = null
+accel = null
+patrol_step = null
+patrol_points = null
+patrol_reach_eps = null
+patrol_speed_mult = null
+nav_mask = null
+investigate_time = null
+chase_timeout = null
+return_reach_eps = null
+spawn_index = null
+return_step = null
+return_points_max = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visibility_layer = 7
@@ -37,3 +59,17 @@ offset_left = -20.0
 offset_top = -35.0
 offset_right = 41.0
 offset_bottom = -12.0
+
+[node name="Logic" type="Node" parent="."]
+
+[node name="Brain" type="Node" parent="Logic"]
+script = ExtResource("3_1vja8")
+
+[node name="Motor" type="Node" parent="Logic"]
+script = ExtResource("4_iwav8")
+
+[node name="Navigator" type="Node" parent="Logic"]
+script = ExtResource("5_1i2q2")
+
+[node name="Vision" type="Node" parent="Logic"]
+script = ExtResource("6_ly5gv")
