@@ -102,7 +102,7 @@ func update_intent() -> EnemyIntent:
 
 func _tick() -> Intent:
 	var now := Time.get_ticks_msec() / 1000.0
-	var player_pos := enemy_owner.target.global_position
+	var player_pos: Vector2= enemy_owner.target.global_position
 
 	if state != last_state:
 		print("[EnemyBrain] State changed from: %s to: %s" % [State.keys()[last_state], State.keys()[state]])
