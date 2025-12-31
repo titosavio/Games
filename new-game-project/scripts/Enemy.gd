@@ -14,6 +14,7 @@ var vision_collision_mask := 2  # 1: player, 2: paredes, 3: chao
 var facing_dir := Vector2.RIGHT
 
 @export var cone_is_visible := true  # mostra o cone de visão
+@export var path_debug_visible := true
 @export var stop_distance := 14.0      # para de grudar
 @export var accel := 10.0              # “suavidade”
 
@@ -51,7 +52,7 @@ func _ready():
 	_build_patrol_path()
 
 func _process(_delta):
-	if cone_is_visible:
+	if cone_is_visible or path_debug_visible:
 		queue_redraw()
 
 func setup(system: AdversarySystem, player: CharacterBody2D) -> void:
@@ -187,6 +188,13 @@ func has_line_of_sight(world_point: Vector2) -> bool:
 
 
 func _draw():
+	if cone_is_visible:
+		_draw_cone()
+
+	if path_debug_visible:
+		_draw_path()
+
+func _draw_cone():
 	if not cone_is_visible:
 		return
 
@@ -226,6 +234,23 @@ func _draw():
 		draw_line(points[j], points[j + 1], Color(1, 1, 0, 0.9), 2.0)
 	draw_line(points[-1], Vector2.ZERO, Color(1, 1, 0, 0.9), 2.0)
 
+func _draw_path():
+	if path.is_empty():
+		return
+
+	# linha começa no spawn
+	var prev := to_local(spawn_pos)
+
+	for i in range(path.size()):
+		var p := to_local(path[i])
+		draw_line(prev, p, Color(0, 1, 1, 0.9), 2.0)
+		prev = p
+
+	# marca o waypoint atual
+	var idx: int = clamp(path_i, 0, path.size() - 1)
+	draw_circle(to_local(path[idx]), 5.0, Color(1, 0.2, 0.2, 0.9))
+
+
 func _build_patrol_path():
 	path.clear()
 	path_i = 0
@@ -240,6 +265,12 @@ func _build_patrol_path():
 		path.append(next)
 		dir = (next - cur).normalized()
 		cur = next
+	
+	# make return path
+	for i in range(path.size() - 2, -1, -1):
+		path.append(path[i])
+	path.append(spawn_pos)
+
 
 func _pick_reachable_point(from: Vector2, preferred_dir: Vector2) -> Vector2:
 	var tries = 10
