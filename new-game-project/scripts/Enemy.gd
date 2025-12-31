@@ -43,8 +43,16 @@ var investigate_until := -999.0
 
 @export var spawn_index := 0
 
+@export var return_step := 120.0
+@export var return_points_max := 8
 
 @onready var label_name: Label = $Label
+
+# histerese
+var return_blocked_frames := 0
+var return_clear_frames := 0
+const RETURN_CONFIRM_FRAMES := 6
+
 
 func _ready():
 	spawn_pos = global_position
@@ -106,6 +114,8 @@ func _physics_process(delta):
 				_investigate(delta)
 				if _now() > investigate_until:
 					state = State.RETURN
+					path.clear()
+					path_i = 0
 
 		State.RETURN:
 			if sees:
@@ -156,7 +166,6 @@ func on_player_died(player_pos: Vector2) -> void:
 	var d := global_position.distance_to(player_pos)
 	if d < distance_to_target_at_respawn:
 		global_position += (global_position - player_pos).normalized() * (distance_to_target_at_respawn - d)
-		print("Enemy %s repositioned to %s after player respawn." % [enemy_id, global_position])
 
 func can_see_target() -> bool:
 	if target == null:
@@ -252,11 +261,11 @@ func _draw_cone():
 	draw_line(points[-1], Vector2.ZERO, Color(1, 1, 0, 0.9), 2.0)
 
 func _draw_path():
-	if not path_debug_visible or path.is_empty():
+	if not path_debug_visible or path.is_empty() or state not in [State.PATROL, State.RETURN]:
 		return
 
 	# linha começa no spawn
-	var prev := to_local(spawn_pos)
+	var prev := to_local(global_position)
 
 	for i in range(path.size()):
 		var p := to_local(path[i])
@@ -321,15 +330,18 @@ func _pick_reachable_point(from: Vector2, preferred_dir: Vector2) -> Vector2:
 	return best
 	
 func _ray_hit(from: Vector2, to: Vector2, mask_to_check: int = nav_mask) -> Dictionary:
-	# checks for collision along the ray
 	var space := get_world_2d().direct_space_state
 	var q := PhysicsRayQueryParameters2D.create(from, to)
 	q.collision_mask = mask_to_check
-	q.exclude = [self, $KillZone]
+	q.exclude = [self]
+	q.exclude += get_children()
+	if has_node("KillZone"):
+		q.exclude.append($KillZone)
 	q.collide_with_areas = false
 	q.collide_with_bodies = true
 	q.hit_from_inside = true
 	return space.intersect_ray(q)
+
 
 func _patrol(delta):
 	if path.is_empty():
@@ -346,6 +358,8 @@ func _patrol(delta):
 			_build_patrol_path()
 
 func _chase(delta):
+	path = []
+	path_i = 0
 	if not has_line_of_sight(target.global_position):
 		state = State.INVESTIGATE
 		investigate_until = _now() + investigate_time
@@ -353,13 +367,46 @@ func _chase(delta):
 	_move_towards(target.global_position, speed, delta)
 
 func _investigate(delta):
+	path = []
+	path_i = 0
 	_move_towards(last_seen_pos, speed * 0.75, delta)
 
 func _return_to_spawn(delta):
-	_move_towards(spawn_pos, speed * 0.8, delta)
 	if global_position.distance_to(spawn_pos) <= return_reach_eps:
+		global_position = spawn_pos
+		velocity = Vector2.ZERO
 		state = State.PATROL
 		_build_patrol_path()
+		return
+
+	# se bloqueado, segue caminho
+	var blocked := _blocked_to_spawn()
+	if blocked:
+		return_blocked_frames += 1
+		return_clear_frames = 0
+	else:
+		return_clear_frames += 1
+		return_blocked_frames = 0
+
+	if return_blocked_frames >= RETURN_CONFIRM_FRAMES:
+		if path.is_empty():
+			_build_return_path()
+		var pt := path[path_i]
+		_move_towards(pt, speed * 0.8, delta)
+		if global_position.distance_to(pt) <= patrol_reach_eps:
+			path_i = min(path_i + 1, path.size() - 1)
+
+	elif return_clear_frames >= RETURN_CONFIRM_FRAMES:
+		path = [spawn_pos]
+		path_i = 0
+		_move_towards(spawn_pos, speed * 0.8, delta)
+	else:
+		# enquanto "decide", NÃO muda de modo: só segue o que já estava fazendo
+		if path.is_empty():
+			_move_towards(spawn_pos, speed * 0.8, delta)
+		else:
+			var pt := path[path_i]
+			_move_towards(pt, speed * 0.8, delta)
 
 func _move_towards(point: Vector2, move_speed: float, delta: float):
 	var v := point - global_position
@@ -372,3 +419,28 @@ func _move_towards(point: Vector2, move_speed: float, delta: float):
 	var desired := facing_dir * move_speed
 	velocity = velocity.lerp(desired, accel * delta)
 	$Sprite2D.flip_h = facing_dir.x < 0
+
+func _blocked_to_spawn() -> bool:
+	var to_spawn := spawn_pos - global_position
+	if to_spawn.length() < 0.001:
+		return false
+	var origin := global_position + to_spawn.normalized() * 6.0
+	var hit := _ray_hit(origin, spawn_pos, nav_mask)
+	return not hit.is_empty()
+
+func _build_return_path():
+	path.clear()
+	path_i = 0
+
+	var cur := global_position
+	for _k in range(return_points_max):
+		var to_spawn := spawn_pos - cur
+		if to_spawn.length() <= return_reach_eps:
+			break
+
+		var pref := to_spawn.normalized()
+		var next := _pick_reachable_point(cur, pref) # já usa ray_hit/nav_mask
+		path.append(next)
+		cur = next
+
+	path.append(spawn_pos) # sempre termina no spawn
