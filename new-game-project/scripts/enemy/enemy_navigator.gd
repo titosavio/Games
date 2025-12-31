@@ -196,14 +196,19 @@ func draw_path(canvas: Node2D, cur_pos: Vector2, state: int) -> void:
 	if state not in [EnemyBrain.State.PATROL, EnemyBrain.State.RETURN] or path.is_empty():
 		return
 
-	var prev := enemy_owner.to_local(cur_pos)
+	var idx: float = clamp(path_i, 0, path.size() - 1)
 
-	for pp in path:
-		var p := enemy_owner.to_local(pp)
+	# começa no inimigo e vai só pro target atual (uma perninha)
+	var prev := enemy_owner.to_local(cur_pos)
+	canvas.draw_line(prev, enemy_owner.to_local(path[idx]), path_line_color, 2.0)
+
+	# desenha o restante do caminho a partir do idx
+	prev = enemy_owner.to_local(path[idx])
+	for j in range(idx + 1, path.size()):
+		var p := enemy_owner.to_local(path[j])
 		canvas.draw_line(prev, p, path_line_color, 2.0)
 		prev = p
 
-	var idx: int = clamp(path_i, 0, path.size() - 1)
 	canvas.draw_circle(enemy_owner.to_local(path[idx]), 5.0, path_point_color)
 
 func reset_to_spawn():
