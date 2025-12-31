@@ -89,9 +89,6 @@ func _physics_process(delta):
 	_move_towards(desired_point, speed * speed_mult, delta)
 	move_and_slide()
 
-func _now() -> float:
-	return Time.get_ticks_msec() / 1000.0
-
 func _apply_stats():
 	if adversary_system == null:
 		return
