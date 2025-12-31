@@ -83,6 +83,8 @@ func update_intent() -> EnemyIntent:
 			)
 		State.CHASE:
 			speed_mult = 1.0
+			enemy_owner.nav_agent.target_position = enemy_owner.target.global_position
+			desired_point = enemy_owner.nav_agent.get_next_path_position()
 		State.INVESTIGATE:
 			speed_mult = 0.75
 			var progress: float = clamp((_now() - investigate_start_t) / investigate_time, 0.0, 1.0)
@@ -93,10 +95,13 @@ func update_intent() -> EnemyIntent:
 				desired_point = enemy_owner.global_position # não anda
 		State.RETURN:
 			speed_mult = 0.8
-			desired_point = enemy_owner.nav.return_target(
-				enemy_owner.global_position,
-				enemy_owner.spawn_pos,
-			)
+			# desired_point = enemy_owner.nav.return_target(
+			# 	enemy_owner.global_position,
+			# 	enemy_owner.spawn_pos,
+			# )
+			enemy_owner.nav_agent.target_position = enemy_owner.spawn_pos
+			desired_point = enemy_owner.nav_agent.get_next_path_position()
+			enemy_owner.nav_agent.debug_enabled = true
 	return EnemyIntent.new(intent.state, desired_point, speed_mult)
 
 	

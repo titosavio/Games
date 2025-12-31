@@ -20,25 +20,7 @@ size = Vector2(23, 23)
 visibility_layer = 7
 collision_mask = 7
 script = ExtResource("1_1vja8")
-enemy_id = null
-base_speed = null
-follow_radius = null
 follow_angle = 180.0
-cone_is_visible = null
-path_debug_visible = null
-stop_distance = null
-accel = null
-patrol_step = null
-patrol_points = null
-patrol_reach_eps = null
-patrol_speed_mult = null
-nav_mask = null
-investigate_time = null
-chase_timeout = null
-return_reach_eps = null
-spawn_index = null
-return_step = null
-return_points_max = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visibility_layer = 7
@@ -73,3 +55,6 @@ script = ExtResource("5_1i2q2")
 
 [node name="Vision" type="Node" parent="Logic"]
 script = ExtResource("6_ly5gv")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true

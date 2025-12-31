@@ -44,7 +44,7 @@ var shape_radius := 0.0
 @onready var nav: EnemyNavigator = $Logic/Navigator
 @onready var brain: EnemyBrain = $Logic/Brain
 @onready var motor: EnemyMotor = $Logic/Motor
-
+@onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
 
 
 func _ready():
@@ -67,6 +67,11 @@ func _ready():
 	vision.setup(self)
 
 	motor.setup(self, accel)
+	
+	nav_agent.path_desired_distance = 8.0
+	nav_agent.target_desired_distance = 10.0
+	nav_agent.radius = shape_radius / 2.0 + 5.0
+	nav_agent.avoidance_enabled = true
 
 func setup(system: AdversarySystem, player: CharacterBody2D) -> void:
 	adversary_system = system

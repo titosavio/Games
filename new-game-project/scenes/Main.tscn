@@ -1,10 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://ot3ll0d2gmdi"]
+[gd_scene load_steps=7 format=3 uid="uid://ot3ll0d2gmdi"]
 
 [ext_resource type="Script" uid="uid://ckpw7cktii0ue" path="res://scripts/Main.gd" id="1_rarhs"]
 [ext_resource type="PackedScene" uid="uid://ccniks3ikqf7r" path="res://scenes/UI.tscn" id="2_vcsgt"]
 [ext_resource type="PackedScene" uid="uid://evgs2en8b83r" path="res://scenes/Player.tscn" id="3_c01mt"]
 [ext_resource type="PackedScene" uid="uid://ddsrl6p7cav3j" path="res://scenes/Enemy.tscn" id="4_nxtc6"]
 [ext_resource type="PackedScene" uid="uid://c3uay2k56y6mf" path="res://scenes/Wall.tscn" id="5_vcsgt"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_vcsgt"]
+vertices = PackedVector2Array(402.6797, -6.171875, 402.4375, -25.46875, 868.40625, -44.203125, 872.6797, -28.789063, 901.2969, 402.78125, 764.6797, 505.96875, 928.3203, -31.46875, 385.6328, 46.90625, 387.6328, -5.4375, -861.3672, 493.0625, -183.35156, 52.09375, -188.6875, -28.039063, -940.90625, -38.148438, -892.6172, -445.10938, -566.8672, -653.1328, 380.14063, -26, 755.3594, -713.6328, 922.3281, -73.09375)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(3, 6, 4), PackedInt32Array(7, 8, 0, 5), PackedInt32Array(7, 5, 9, 10), PackedInt32Array(11, 10, 9, 12, 13, 14), PackedInt32Array(15, 11, 14, 16, 17), PackedInt32Array(1, 15, 17, 2)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-951, -38, -870, 503, 768, 516, 911, 408, 939, -42, 378, -15, 376, 37, -174, 42, -178, -18, 380, -16, 422, -15, 878, -38, 934, -68, 763, -724, -570, -663, -902, -451)])
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_rarhs")
@@ -23,23 +28,13 @@ rotation = -0.20922449
 [node name="Enemy1" parent="Enemies" instance=ExtResource("4_nxtc6")]
 position = Vector2(46.000004, -39)
 rotation = -6.021417
-enemy_id = ""
-base_speed = 45.0
-accel = 10.0
-follow_radius = 220.0
-nav_mask = 6
-patrol_step = 140.0
-patrol_points = 4
-patrol_reach_eps = 10.0
-patrol_speed_mult = 0.55
-investigate_time = 2.0
-chase_timeout = 3.0
-return_reach_eps = 12.0
-return_points_max = 8
-spawn_index = 0
-cone_is_visible = true
-path_debug_visible = true
 
-[node name="Wall" parent="." instance=ExtResource("5_vcsgt")]
+[node name="NavRegion" type="NavigationRegion2D" parent="."]
+position = Vector2(-12, -7)
+navigation_polygon = SubResource("NavigationPolygon_vcsgt")
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="Wall" parent="Walls" instance=ExtResource("5_vcsgt")]
 position = Vector2(89.99999, -1.9999999)
-scale = Vector2(10.435133, -0.9697275)
+scale = Vector2(10.999416, 1.1994485)
