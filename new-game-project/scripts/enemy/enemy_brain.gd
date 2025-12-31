@@ -65,7 +65,7 @@ func update_intent() -> EnemyIntent:
 	if intent.clear_nav_path:
 		enemy_owner.nav.clear_path()
 
-	match state:
+	match intent.state:
 		State.PATROL:
 			speed_mult = patrol_speed_mult
 			desired_point = enemy_owner.nav.patrol_target(
@@ -87,7 +87,7 @@ func update_intent() -> EnemyIntent:
 				enemy_owner.spawn_pos,
 			)
 
-	return EnemyIntent.new(state, desired_point, speed_mult)
+	return EnemyIntent.new(intent.state, desired_point, speed_mult)
 
 	
 
@@ -102,6 +102,13 @@ func _tick() -> Intent:
 	if sees:
 		return Intent.new(State.CHASE, investigate_until, player_pos, true)
 
+	var colissionShape := enemy_owner.get_node_or_null("CollisionShape2D")
+	var shape_radius := 0.0
+	if colissionShape != null and colissionShape.shape is CircleShape2D:
+		shape_radius = colissionShape.shape.radius
+	elif colissionShape != null and colissionShape.shape is RectangleShape2D:
+		shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
+
 	match state:
 		State.PATROL:
 			return Intent.new(state, investigate_until, Vector2.ZERO, false)
@@ -113,13 +120,6 @@ func _tick() -> Intent:
 			return Intent.new(state, investigate_until, last_seen_pos, true)
 
 		State.INVESTIGATE:
-			var colissionShape := enemy_owner.get_node_or_null("CollisionShape2D")
-			var shape_radius := 0.0
-			if colissionShape != null and colissionShape.shape is CircleShape2D:
-				shape_radius = colissionShape.shape.radius
-			elif colissionShape != null and colissionShape.shape is RectangleShape2D:
-				shape_radius = max(colissionShape.shape.extents.x, colissionShape.shape.extents.y)
-
 			if enemy_owner.global_position.distance_to(last_seen_pos) < shape_radius + 5.0:
 				return Intent.new(State.RETURN, investigate_until, enemy_owner.global_position, false)
 
@@ -130,7 +130,8 @@ func _tick() -> Intent:
 			return Intent.new(state, investigate_until, last_seen_pos, false)
 
 		State.RETURN:
-			# return vai pro spawn (Navigator pode trocar pra waypoints se bloqueado)
+			if enemy_owner.global_position.distance_to(enemy_owner.spawn_pos) < shape_radius + 5.0:
+				return Intent.new(State.PATROL, investigate_until, Vector2.ZERO, true)
 			return Intent.new(state, investigate_until, enemy_owner.spawn_pos, false)
 
 	return Intent.new(state, investigate_until, enemy_owner.spawn_pos, false)
