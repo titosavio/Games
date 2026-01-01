@@ -83,8 +83,7 @@ func update_intent() -> EnemyIntent:
 			)
 		State.CHASE:
 			speed_mult = 1.0
-			enemy_owner.nav_agent.target_position = enemy_owner.target.global_position
-			desired_point = enemy_owner.nav_agent.get_next_path_position()
+			desired_point = _get_nav_point(enemy_owner.target.global_position)
 		State.INVESTIGATE:
 			speed_mult = 0.75
 			var progress: float = clamp((_now() - investigate_start_t) / investigate_time, 0.0, 1.0)
@@ -95,12 +94,12 @@ func update_intent() -> EnemyIntent:
 				desired_point = enemy_owner.global_position # não anda
 		State.RETURN:
 			speed_mult = 0.8
-			enemy_owner.nav_agent.target_position = enemy_owner.spawn_pos
-			desired_point = enemy_owner.nav_agent.get_next_path_position()
-			enemy_owner.nav_agent.debug_enabled = true
+			desired_point = _get_nav_point(enemy_owner.spawn_pos)
 	return EnemyIntent.new(intent.state, desired_point, speed_mult)
 
-	
+func _get_nav_point(target: Vector2) -> Vector2:
+	enemy_owner.nav_agent.target_position = target
+	return enemy_owner.nav_agent.get_next_path_position()
 
 func _tick() -> Intent:
 	var now := Time.get_ticks_msec() / 1000.0
