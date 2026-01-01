@@ -140,3 +140,6 @@ func _draw():
 	if brain.state == brain.State.CHASE and not vision.can_see_target():
 		draw_circle(to_local(brain.last_seen_pos), 4.0, Color(1, 1, 0, 0.7))
 		
+
+func set_spawn_position(pos: Vector2) -> void:
+	spawn_pos = pos

@@ -2,6 +2,8 @@ extends Node2D
 
 @onready var gen: BSPMapGenerator = $MapGenerator
 @onready var builder: MapBuilder = $MapBuilder
+@onready var spawner: EnemySpawner = $EnemySpawner
+@onready var enemy_scene: PackedScene = preload("res://scenes/Enemy.tscn")
 
 @export var _seed: int = 0
 
@@ -21,6 +23,11 @@ func build_world(player: Player) -> void:
 	builder.rebuild(data)
 
 	player.global_position = data.cell_to_world(data.start_cell)
+	player.set_spawn_position(data.cell_to_world(data.start_cell))
+	
+	var sys: AdversarySystem = Game.adversaries if Game.has_method("get") else null
+	
+	spawner.spawn_enemies(data, self, player, sys, enemy_scene)
 	
 func _ready() -> void:
 	Game.player_registered.connect(

@@ -39,3 +39,6 @@ func die(killer: Enemy):
 	velocity = Vector2.ZERO
 
 	emit_signal("died", respawn_pos)
+
+func set_spawn_position(pos: Vector2) -> void:
+	respawn_pos = pos
