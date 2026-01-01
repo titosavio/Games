@@ -2,8 +2,12 @@ extends Node
 class_name SaveLoad
 
 const SAVE_PATH := "user://save_v1.json"
+const USE_SAVES := false
 
 func save() -> void:
+	if not USE_SAVES:
+		return
+
 	var state: Dictionary = {
 		"version": 1,
 		"adversaries": Game.adversaries.to_dict(),
@@ -22,6 +26,9 @@ func save() -> void:
 	print("Game saved to %s" % SAVE_PATH)
 
 func load() -> Dictionary:
+	if not USE_SAVES:
+		return {}
+		
 	if not FileAccess.file_exists(SAVE_PATH):
 		return {}
 

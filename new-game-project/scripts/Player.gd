@@ -7,6 +7,9 @@ class_name Player
 
 signal died(respawn_pos: Vector2)
 
+func _ready() -> void:
+	Game.register_player(self)
+
 func to_dict() -> Dictionary:
 	return {
 		"pos": [global_position.x, global_position.y],

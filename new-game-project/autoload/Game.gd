@@ -1,8 +1,9 @@
 extends Node
 
+signal player_registered(p)
 
 var adversaries: AdversarySystem
-var player: Player
+var player: Player = null
 var enemies: Array[Node] = []
 var world_state: Dictionary = {}
 var save_load_instance: SaveLoad
@@ -28,3 +29,7 @@ func _notification(what):
 func _apply_player_save(pdict: Dictionary) -> void:
 	if player != null:
 		player.from_dict(pdict)
+
+func register_player(p: Player) -> void:
+	player = p
+	emit_signal("player_registered", p)
