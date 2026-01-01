@@ -72,6 +72,7 @@ func _ready():
 	nav_agent.target_desired_distance = 10.0
 	nav_agent.radius = shape_radius / 2.0 + 5.0
 	nav_agent.avoidance_enabled = true
+	nav_agent.debug_enabled = path_debug_visible
 
 func setup(system: AdversarySystem, player: CharacterBody2D) -> void:
 	adversary_system = system
